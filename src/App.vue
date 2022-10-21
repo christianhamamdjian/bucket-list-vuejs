@@ -1,26 +1,142 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <h1>Bucket List</h1>
+    <hr />
+    <div>
+      <div>
+        <input v-model="description" type="text" placeholder="Goal..." />
+        <input v-model="do_before" type="text" placeholder="Do before..." />
+      </div>
+      <button>
+        <a @click="addItem" :disabled="!description">Add</a>
+      </button>
+    </div>
+    <div v-for="(item, i) in items" :key="item.uuid">
+      <div>
+        <input type="checkbox" />
+        <input v-if="isSelected(item)" v-model="editedDescription" />
+        <div v-else>{{ item.description }}</div>
+        <input v-if="isSelected(item)" v-model="editedDobefore" />
+        <div v-else>{{ item.do_before }}</div>
+        <div>
+          <button
+            @click="
+              Object.keys(selected).length > 0 ? unselect() : select(item)
+            "
+          >
+            {{ isSelected(item) ? "Cancel" : "Edit" }}
+          </button>
+          <button
+            @click="
+              isSelected(item) ? updateItem(item, i) : removeItem(item, i)
+            "
+          >
+            {{ isSelected(item) ? "Update" : "Delete" }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <button>Done</button>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import axios from "axios";
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+  data() {
+    return {
+      items: [],
+      description: "",
+      do_before: "",
+      editedDescription: "",
+      editedDobefore: "",
+      selected: {},
+      apiUrl: process.env.VUE_APP_API_URL,
+      apiKey: process.env.VUE_APP_API_KEY,
+    };
+  },
+  async mounted() {
+    const response = await axios.get(
+      this.apiUrl + "/api/item?offset=0&limit=20",
+      {
+        headers: {
+          "API-key": this.apiKey,
+        },
+      }
+    );
+    this.items = response.data.data;
+  },
+  methods: {
+    async addItem() {
+      const response = await axios.post(
+        this.apiUrl + "/api/item",
+        {
+          description: this.description,
+          do_before: this.do_before,
+        },
+        {
+          headers: {
+            "API-key": this.apiKey,
+          },
+          "content-type": "text/json",
+        }
+      );
+      console.log(response.data);
+      this.items.push(response.data);
+      this.description = "";
+      this.do_before = "";
+    },
+    async removeItem(item, i) {
+      await axios.delete(this.apiUrl + "/api/item/" + item.uuid, {
+        headers: {
+          "API-key": this.apiKey,
+        },
+      });
+      this.items.splice(i, 1);
+    },
+    async updateItem(item, i) {
+      const response = await axios.put(
+        this.apiUrl + "/api/item/" + item.uuid,
+        {
+          description: this.editedDescription,
+          do_before: this.editedDobefore,
+        },
+        {
+          headers: {
+            "API-key": this.apiKey,
+          },
+          "content-type": "text/json",
+        }
+      );
+      this.items[i] = response.data;
+      this.unselect();
+    },
+    select(item) {
+      this.selected = item;
+      this.editedDescription = item.description;
+      this.editedDobefore = item.do_before;
+    },
+    isSelected(item) {
+      return item.uuid === this.selected.uuid;
+    },
+    unselect() {
+      this.selected = {};
+      this.editedDescription = "";
+      this.editedDobefore = "";
+    },
+  },
+};
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin: auto;
+  margin: 3rem;
+  max-width: 700px;
+}
+.icon {
+  cursor: pointer;
 }
 </style>
