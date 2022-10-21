@@ -12,13 +12,15 @@
       </button>
     </div>
     <div v-for="(item, i) in items" :key="item.uuid">
-      <div>
+      <div class="item-row">
         <input type="checkbox" />
         <input v-if="isSelected(item)" v-model="editedDescription" />
         <div v-else>{{ item.description }}</div>
         <input v-if="isSelected(item)" v-model="editedDobefore" />
         <div v-else>{{ item.do_before }}</div>
-        <button @click="showModal(i)">...</button>
+        <button @click="modalList[i] ? resetModals() : showModal(i)">
+          ...
+        </button>
         <div v-show="modalList[i]">
           <button
             @click="
@@ -69,7 +71,7 @@ export default {
       }
     );
     this.items = response.data.data;
-    this.resetmodals();
+    this.modalList = Array.from(this.items.length);
   },
   methods: {
     async addItem() {
@@ -148,6 +150,12 @@ export default {
   margin: auto;
   margin: 3rem;
   max-width: 700px;
+}
+.item-row {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  justify-items: space-between;
 }
 .icon {
   cursor: pointer;
