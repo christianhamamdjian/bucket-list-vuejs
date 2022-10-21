@@ -18,7 +18,8 @@
         <div v-else>{{ item.description }}</div>
         <input v-if="isSelected(item)" v-model="editedDobefore" />
         <div v-else>{{ item.do_before }}</div>
-        <div>
+        <button @click="showModal(i)">...</button>
+        <div v-show="modalList[i]">
           <button
             @click="
               Object.keys(selected).length > 0 ? unselect() : select(item)
@@ -37,7 +38,7 @@
       </div>
     </div>
     <hr />
-    <button>Done</button>
+    <button @click="resetModals">Done</button>
   </div>
 </template>
 
@@ -53,6 +54,7 @@ export default {
       editedDescription: "",
       editedDobefore: "",
       selected: {},
+      modalList: [],
       apiUrl: process.env.VUE_APP_API_URL,
       apiKey: process.env.VUE_APP_API_KEY,
     };
@@ -67,6 +69,7 @@ export default {
       }
     );
     this.items = response.data.data;
+    this.resetmodals();
   },
   methods: {
     async addItem() {
@@ -89,6 +92,7 @@ export default {
       this.do_before = "";
     },
     async removeItem(item, i) {
+      this.resetModals();
       await axios.delete(this.apiUrl + "/api/item/" + item.uuid, {
         headers: {
           "API-key": this.apiKey,
@@ -97,6 +101,7 @@ export default {
       this.items.splice(i, 1);
     },
     async updateItem(item, i) {
+      this.resetModals();
       const response = await axios.put(
         this.apiUrl + "/api/item/" + item.uuid,
         {
@@ -122,9 +127,17 @@ export default {
       return item.uuid === this.selected.uuid;
     },
     unselect() {
+      this.resetModals();
       this.selected = {};
       this.editedDescription = "";
       this.editedDobefore = "";
+    },
+    showModal(i) {
+      this.resetModals();
+      this.modalList[i] = true;
+    },
+    resetModals() {
+      this.modalList = Array.from(this.items.length);
     },
   },
 };
