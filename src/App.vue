@@ -8,12 +8,16 @@
         <input v-model="do_before" type="text" placeholder="Do before..." />
       </div>
       <button>
-        <a @click="addItem" :disabled="!description">Add</a>
+        <a @click="addItem" :disabled="!description || !do_before">Add</a>
       </button>
     </div>
     <div v-for="(item, i) in items" :key="item.uuid">
       <div class="item-row">
-        <input type="checkbox" />
+        <label
+          class="styled-checkbox"
+          :class="{ 'styled-checkbox-checked': itemDone(item) }"
+          @click="isDone(item, i)"
+        ></label>
         <input v-if="isSelected(item)" v-model="editedDescription" />
         <div v-else>{{ item.description }}</div>
         <input v-if="isSelected(item)" v-model="editedDobefore" />
@@ -88,7 +92,6 @@ export default {
           "content-type": "text/json",
         }
       );
-      console.log(response.data);
       this.items.push(response.data);
       this.description = "";
       this.do_before = "";
@@ -109,6 +112,23 @@ export default {
         {
           description: this.editedDescription,
           do_before: this.editedDobefore,
+        },
+        {
+          headers: {
+            "API-key": this.apiKey,
+          },
+          "content-type": "text/json",
+        }
+      );
+      this.items[i] = response.data;
+      this.unselect();
+    },
+    async isDone(item, i) {
+      this.resetModals();
+      const response = await axios.put(
+        this.apiUrl + "/api/item/" + item.uuid,
+        {
+          done: !item.done,
         },
         {
           headers: {
@@ -141,6 +161,9 @@ export default {
     resetModals() {
       this.modalList = Array.from(this.items.length);
     },
+    itemDone(item) {
+      return item.done;
+    },
   },
 };
 </script>
@@ -156,6 +179,15 @@ export default {
   display: flex;
   gap: 20px;
   justify-items: space-between;
+}
+.styled-checkbox {
+  height: 20px;
+  width: 20px;
+  border: 1px solid #000;
+  border-radius: 4px;
+}
+.styled-checkbox-checked {
+  background-color: #ccc;
 }
 .icon {
   cursor: pointer;
