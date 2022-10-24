@@ -5,11 +5,10 @@
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
-                d="M13.2538 1.41379L5.64509 11.9138L1.75378 7.91379"
-                stroke="white"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+	<path
+    d="M13.2538 1.41379L5.64509 11.9138L1.75378 7.91379"
+    stroke="white"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    stroke-linejoin="round" />
+</svg>
