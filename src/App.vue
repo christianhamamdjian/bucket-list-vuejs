@@ -120,7 +120,7 @@
     <hr />
     <!-- Footer start-->
     <div class="footer">
-      <button class="done-btn" @click="noSelection">Done</button>
+      <button class="done-btn" @click="doneButton">Done</button>
     </div>
     <!-- Footer end-->
   </div>
@@ -293,6 +293,10 @@ export default {
         this.description = "";
         this.do_before = "";
       }
+    },
+    doneButton() {
+      this.hideAddForm();
+      this.noSelection();
     },
     hideAddForm() {
       this.addForm = false;
