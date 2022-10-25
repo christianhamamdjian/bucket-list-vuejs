@@ -16,7 +16,7 @@
     <Transition name="fly">
       <div class="add-form" v-show="this.addForm">
         <form>
-          <div class="inputs">
+          <div class="add-form-fields">
             <input
               class="form-goal"
               v-model="description"
@@ -33,9 +33,10 @@
             />
             <button
               type="submit"
-              class="add-form-btn"
+              class="add-form-btn-disabled"
+              :class="{ 'add-form-btn': this.description && this.do_before }"
               @click.prevent="addItem"
-              :disabled="!description || !do_before"
+              :disabled="!this.description || !this.do_before"
             >
               Add
             </button>
@@ -51,7 +52,7 @@
     <div class="list-container">
       <div class="list-head">
         <div>Done</div>
-        <div class="done-before-head">Do before age</div>
+        <div class="do-before-head">Do before age</div>
       </div>
       <div class="items-list" v-for="(item, i) in items" :key="item.uuid">
         <!-- Item start -->
@@ -67,10 +68,10 @@
             <input v-model="editedDescription" type="text" />
           </div>
           <div v-else>{{ item.description }}</div>
-          <div class="done-before-input" v-if="isEditing(item)">
+          <div class="do-before-field" v-if="isEditing(item)">
             <input v-model="editedDobefore" type="number" min="1" max="140" />
           </div>
-          <div class="done-before" v-else>{{ item.do_before }}</div>
+          <div class="do-before-list" v-else>{{ item.do_before }}</div>
           <div class="update-cancel-btns" v-if="isEditing(item)">
             <div class="update-btn" @click="updateItem(item, i)">Update</div>
             <div class="cancel-btn" @click="noSelection">Cancel</div>
@@ -119,7 +120,7 @@
     <hr />
     <!-- Footer start-->
     <div class="footer">
-      <button class="done-btn" @click="resetModals">Done</button>
+      <button class="done-btn" @click="noSelection">Done</button>
     </div>
     <!-- Footer end-->
   </div>
@@ -312,28 +313,13 @@ body {
   display: flex;
   justify-content: center;
 }
+
+/* App loader */
+
 @keyframes spinner {
   to {
     transform: rotate(360deg);
   }
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fly-enter-active,
-.fly-leave-active {
-  transition: all 0.3s ease;
-}
-.fly-enter-from,
-.fly-leave-to {
-  transform: translateY(-100px);
-  opacity: 0;
 }
 .loading {
   width: 6rem;
@@ -343,8 +329,13 @@ body {
   margin-bottom: 10rem;
   border-radius: 50%;
   border: 3px solid #ccc;
-  border-top-color: var(--clr-primary-5);
+  border-top-color: #063251;
   animation: spinner 0.6s linear infinite;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
 }
 .main-container {
   font-family: "Open Sans", sans-serif;
@@ -380,22 +371,61 @@ hr {
   width: 95%;
   margin: 40px auto;
 }
-.loader {
-  font-size: 3rem;
-  display: flex;
-  justify-content: center;
-  padding: 3rem;
-}
+
+/* Overlay */
+
 .overlay {
   position: absolute;
   width: 100%;
   height: 100%;
+  background: transparent;
 }
+
+/* Add item form toggler */
+
+.add-form {
+  padding-left: 20px;
+}
+.add-form-btn-disabled {
+  border: none;
+  border: 1px solid #67889f;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  background: #ffffff;
+}
+.add-form-btn {
+  border: none;
+  border: 1px solid #67889f;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  background: #ffffff;
+}
+.add-form-btn:hover {
+  background: #f5f5f5;
+}
+.add-form-btn:active {
+  background: #67889f;
+}
+
+/* Add item form animation */
+
+.fly-enter-active,
+.fly-leave-active {
+  transition: all 0.3s ease;
+}
+.fly-enter-from,
+.fly-leave-to {
+  transform: translateY(-100px);
+  opacity: 0;
+}
+
+/* Add item form */
+
 input {
   padding-left: 0.5rem;
   font-size: 1rem;
 }
-.inputs {
+.add-form-fields {
   font-size: 1rem;
   border-radius: 8px;
   padding: 1rem 1.5rem;
@@ -416,6 +446,25 @@ input {
 .form-goal {
   width: 200px;
 }
+
+/* Add item form submit */
+
+.add-btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+.add-btn:hover {
+  transform: rotate(45deg);
+}
+.add-btn-clicked {
+  transform: rotate(45deg);
+}
+
+/* Items list */
+
 .list-head {
   display: flex;
   margin-top: 40px;
@@ -438,34 +487,47 @@ input {
   align-items: center;
   margin-bottom: 10px;
 }
-.done-before-head {
+.do-before-head {
   margin-left: auto;
   margin-right: 60px;
 }
-.done-before {
+.do-before-list {
   font-family: "Roboto Mono", sans-serif;
   font-size: 1rem;
   font-weight: 500;
   margin-left: auto;
   margin-right: 10px;
 }
-.description input {
-  border-radius: 4px;
-  border: 1px solid #67889f;
+
+/* Options modal reveal button */
+
+.reveal-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  padding-bottom: 4px;
 }
-.done-before-input {
-  width: 50px;
-  margin-left: auto;
-  margin-right: 10px;
+.reveal-btn:hover {
+  background: #d6e0e8;
 }
-.done-before-input input {
-  font-family: "Roboto Mono", sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
-  width: 50px;
-  border-radius: 4px;
-  border: 1px solid #67889f;
+
+/* Modal animation */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
 }
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Options modal */
+
 .modal-head {
   display: flex;
   flex-direction: row;
@@ -489,6 +551,82 @@ input {
   padding: 20px;
   z-index: 100;
 }
+
+/* Modal buttons */
+
+.delete-btn {
+  font-size: 1rem;
+  background: transparent;
+  border: none;
+  color: #ff0000;
+  margin-top: 15px;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  color: #333;
+}
+.edit-btn {
+  font-size: 1rem;
+  background: transparent;
+  border: none;
+  color: #67889f;
+  margin-top: 15px;
+  cursor: pointer;
+}
+.edit-btn:hover {
+  color: #333;
+}
+
+/* Editing buttons */
+
+.update-cancel-btns {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+.update-btn,
+.cancel-btn {
+  border: none;
+  border: 1px solid #67889f;
+  border-radius: 4px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  margin: 2px 0px;
+}
+.update-btn:hover,
+.cancel-btn:hover {
+  background: #f5f5f5;
+}
+.update-btn:active,
+.cancel-btn:active {
+  background: #d6e0e8;
+}
+
+/* Item editing fields */
+
+.description input {
+  border-radius: 4px;
+  border: 1px solid #67889f;
+}
+.do-before-field {
+  width: 50px;
+  margin-left: auto;
+  margin-right: 10px;
+}
+.do-before-field input {
+  font-family: "Roboto Mono", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  width: 50px;
+  border-radius: 4px;
+  border: 1px solid #67889f;
+}
+
+/* Done checkbox */
+
 .styled-checkbox {
   height: 28px;
   width: 28px;
@@ -518,99 +656,9 @@ input {
   margin-top: 2px;
   width: 18px;
 }
-.header {
-  display: flex;
-  justify-content: flex-end;
-}
-.add-form {
-  padding-left: 20px;
-}
-.add-form-btn {
-  border: none;
-  border: 1px solid #67889f;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  background: #ffffff;
-}
-.add-form-btn:hover {
-  background: #f5f5f5;
-}
-.add-form-btn:active {
-  background: #67889f;
-}
-.add-btn {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-}
-.add-btn:hover {
-  transform: rotate(45deg);
-}
-.add-btn-clicked {
-  transform: rotate(45deg);
-}
-.reveal-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  padding-bottom: 4px;
-}
-.reveal-btn:hover {
-  background: #d6e0e8;
-}
-.update-cancel-btns {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-}
-.update-btn,
-.cancel-btn {
-  border: none;
-  border: 1px solid #67889f;
-  border-radius: 4px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  padding: 0.2rem 0.6rem;
-  cursor: pointer;
-  margin: 2px 0px;
-}
-.update-btn:hover,
-.cancel-btn:hover {
-  background: #f5f5f5;
-}
-.update-btn:active,
-.cancel-btn:active {
-  background: #d6e0e8;
-}
-.delete-btn {
-  font-size: 1rem;
-  background: transparent;
-  border: none;
-  color: #ff0000;
-  margin-top: 15px;
-  cursor: pointer;
-}
-.delete-btn:hover {
-  color: #333;
-}
-.edit-btn {
-  font-size: 1rem;
-  background: transparent;
-  border: none;
-  color: #67889f;
-  margin-top: 15px;
-  cursor: pointer;
-}
-.edit-btn:hover {
-  color: #333;
-}
+
+/* Footer */
+
 .footer {
   width: 100%;
   display: flex;
@@ -631,9 +679,7 @@ input {
 .done-btn:hover {
   background-color: #67889f;
 }
-.icon {
-  cursor: pointer;
-}
+
 @media only screen and (max-width: 700px) {
   .modal-list {
     width: 86%;
@@ -647,6 +693,9 @@ input {
     padding-right: 40px;
     border-radius: 16px 16px 0px 0px;
   }
+
+  /* Modal animation */
+
   .fade-enter-active,
   .fade-leave-active {
     transition: all 0.3s ease;
@@ -656,6 +705,7 @@ input {
     transform: translateY(100px);
     opacity: 0;
   }
+
   .done-btn {
     margin-right: 0px;
   }
