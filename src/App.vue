@@ -3,7 +3,7 @@
   <div class="main-container">
     <div class="header">
       <div
-        @click="showAddForm"
+        @click="toggleAddForm"
         class="add-btn"
         :class="{ 'add-btn-clicked': this.addForm }"
       >
@@ -11,7 +11,9 @@
       </div>
     </div>
     <h1>Bucket List</h1>
-    <Transition name="fade">
+
+    <!-- Add form start -->
+    <Transition name="fly">
       <div class="add-form" v-show="this.addForm">
         <form>
           <div class="inputs">
@@ -41,42 +43,46 @@
         </form>
       </div>
     </Transition>
+    <!-- Add form end -->
+
     <div class="loading" v-if="!items.length"></div>
+
+    <!-- Items list start -->
     <div class="list-container">
       <div class="list-head">
         <div>Done</div>
         <div class="done-before-head">Do before age</div>
       </div>
       <div class="items-list" v-for="(item, i) in items" :key="item.uuid">
+        <!-- Item start -->
         <div class="item-row">
           <label
             class="styled-checkbox"
             :class="{ 'styled-checkbox-checked': itemDone(item) }"
             @click="isDone(item, i)"
           >
-            <div class="checked-sign" v-if="itemDone(item)">
-              <img src="./assets/images/check-mark.svg" />
-            </div>
+            <div class="checked-sign" v-if="itemDone(item)"></div>
           </label>
-          <div class="description-input" v-if="isSelected(item)">
+          <div class="description-input" v-if="isEditing(item)">
             <input v-model="editedDescription" type="text" />
           </div>
           <div v-else>{{ item.description }}</div>
-          <div class="done-before-input" v-if="isSelected(item)">
+          <div class="done-before-input" v-if="isEditing(item)">
             <input v-model="editedDobefore" type="number" min="1" max="140" />
           </div>
           <div class="done-before" v-else>{{ item.do_before }}</div>
-          <div class="update-cancel-btns" v-if="isSelected(item)">
+          <div class="update-cancel-btns" v-if="isEditing(item)">
             <div class="update-btn" @click="updateItem(item, i)">Update</div>
-            <div class="cancel-btn" @click="resetSelected">Cancel</div>
+            <div class="cancel-btn" @click="noSelection">Cancel</div>
           </div>
           <button
             v-else
-            :class="{ 'reveal-btn': !isSelected(item) }"
-            @click="modalList[i] ? resetModals() : showModal(i)"
+            :class="{ 'reveal-btn': !isEditing(item) }"
+            @click="modals[i] ? resetModals() : showModal(i)"
           >
+            <!-- Modal start -->
             <Transition name="fade">
-              <div class="modal-list" v-show="modalList[i]">
+              <div class="modal-list" v-show="modals[i]">
                 <div class="modal-head">
                   <h2>{{ item.description }}</h2>
                   <div class="modal-close">
@@ -94,28 +100,28 @@
                   </button>
                 </div>
                 <div>
-                  <button
-                    class="edit-btn"
-                    @click="
-                      Object.keys(selected).length > 0
-                        ? unselect()
-                        : select(item)
-                    "
-                  >
+                  <button class="edit-btn" @click="edit(item)">
                     <img src="./assets/images/edit.svg" /> Edit bucket item
                   </button>
                 </div>
               </div>
             </Transition>
+            <!-- Modal end -->
+
             <div><img src="./assets/images/three-dots.svg" /></div>
           </button>
         </div>
       </div>
+      <!-- Item end -->
     </div>
+    <!-- Items list end-->
+
     <hr />
+    <!-- Footer start-->
     <div class="footer">
       <button class="done-btn" @click="resetModals">Done</button>
     </div>
+    <!-- Footer end-->
   </div>
 </template>
 <script>
@@ -129,10 +135,9 @@ export default {
       do_before: "",
       editedDescription: "",
       editedDobefore: "",
-      selected: {},
-      modalShow: false,
+      selectedItem: {},
       overlay: false,
-      modalList: [],
+      modals: [],
       addForm: false,
       apiUrl: process.env.VUE_APP_API_URL,
       apiKey: process.env.VUE_APP_API_KEY,
@@ -148,7 +153,6 @@ export default {
       }
     );
     this.items = response.data.data;
-    this.modalList = Array.from(this.items.length);
   },
   watch: {
     description: function (newValue) {
@@ -174,43 +178,39 @@ export default {
             "content-type": "text/json",
           }
         );
-        this.items.push(response.data);
+        this.items = [...this.items, response.data];
         this.description = "";
         this.do_before = "";
-        this.showAddForm();
+        this.hideAddForm();
       } catch (e) {
         alert("An error has occured, please try again.");
       }
     },
     async removeItem(item, i) {
       try {
-        this.resetModals();
         await axios.delete(this.apiUrl + "/api/item/" + item.uuid, {
           headers: {
             "API-key": this.apiKey,
           },
         });
         this.items.splice(i, 1);
-        this.overlay = false;
       } catch (e) {
         alert("An error has occured, please try again.");
       }
     },
     confirmDelete(item, i) {
-      try {
-        let confirmed = confirm("Are you sure?");
-        if (confirmed) {
-          this.removeItem(item, i);
-        } else {
-          this.resetSelected();
-        }
-      } catch (e) {
-        alert("An error has occured, please try again.");
+      this.overlay = false;
+      let confirmed = confirm(
+        "Are you sure you want to delete " + item.description + "?"
+      );
+      if (confirmed) {
+        this.removeItem(item, i);
+      } else {
+        this.selectedItem = {};
       }
     },
     async updateItem(item, i) {
       try {
-        this.resetModals();
         const response = await axios.put(
           this.apiUrl + "/api/item/" + item.uuid,
           {
@@ -225,7 +225,8 @@ export default {
           }
         );
         this.items[i] = response.data;
-        this.unselect();
+        this.noSelection();
+        this.resetEditFields();
         this.overlay = false;
       } catch (e) {
         alert("An error has occured, please try again.");
@@ -233,7 +234,6 @@ export default {
     },
     async isDone(item, i) {
       try {
-        this.resetModals();
         const response = await axios.put(
           this.apiUrl + "/api/item/" + item.uuid,
           {
@@ -247,7 +247,6 @@ export default {
           }
         );
         this.items[i] = response.data;
-        this.unselect();
       } catch (e) {
         alert("An error has occured, please try again.");
       }
@@ -255,43 +254,49 @@ export default {
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
-    select(item) {
-      this.selected = item;
+    edit(item) {
+      this.selectedItem = item;
       this.editedDescription = item.description;
       this.editedDobefore = item.do_before;
     },
-    isSelected(item) {
-      return item.uuid === this.selected.uuid;
+    isEditing(item) {
+      return item.uuid === this.selectedItem.uuid;
     },
-    unselect() {
-      this.resetModals();
-      this.selected = {};
+    noSelection() {
+      this.selectedItem = {};
+    },
+    resetEditFields() {
       this.editedDescription = "";
       this.editedDobefore = "";
     },
     showModal(i) {
-      this.resetModals();
-      this.modalList[i] = true;
-      this.overlay = true;
-      this.modalShow;
+      this.modals[i] = true;
+      this.showOverlay();
     },
     resetModals() {
-      this.modalList = Array.from(this.items.length);
-      this.overlay = false;
-      this.modalShow = false;
+      this.modals = Array.from(this.items.length);
+      this.hideOverlay();
     },
-    resetSelected() {
-      this.selected = {};
+    showOverlay() {
+      this.overlay = true;
+    },
+    hideOverlay() {
+      this.overlay = false;
     },
     itemDone(item) {
       return item.done;
     },
-    showAddForm() {
+    toggleAddForm() {
       this.addForm = !this.addForm;
       if (!this.addForm) {
         this.description = "";
         this.do_before = "";
       }
+    },
+    hideAddForm() {
+      this.addForm = false;
+      this.description = "";
+      this.do_before = "";
     },
   },
 };
@@ -318,6 +323,16 @@ body {
 }
 .fade-enter-from,
 .fade-leave-to {
+  opacity: 0;
+}
+
+.fly-enter-active,
+.fly-leave-active {
+  transition: all 0.3s ease;
+}
+.fly-enter-from,
+.fly-leave-to {
+  transform: translateY(-100px);
   opacity: 0;
 }
 .loading {
@@ -484,8 +499,12 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: url(./assets/images/check-mark.svg) no-repeat top 8px left 6px;
 }
 .styled-checkbox:hover {
+  background: url(./assets/images/check-mark-dark.svg) no-repeat top 8px left
+    6px;
+
   background-color: #f5f5f5;
 }
 .styled-checkbox:active {
