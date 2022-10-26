@@ -10,6 +10,7 @@
         <img src="./assets/images/add.svg" />
       </div>
     </div>
+
     <h1>Bucket List</h1>
 
     <!-- Add form start -->
@@ -49,81 +50,83 @@
     <div class="loading" v-if="!items.length"></div>
 
     <!-- Items list start -->
-    <div class="list-container">
-      <div class="list-head">
-        <div>Done</div>
-        <div class="do-before-head">Do before age</div>
-      </div>
-      <div class="items-list" v-for="(item, i) in items" :key="item.uuid">
-        <!-- Item start -->
-        <div class="item-row">
-          <label
-            class="styled-checkbox"
-            :class="{ 'styled-checkbox-checked': itemDone(item) }"
-            @click="isDone(item, i)"
-          >
-            <div class="checked-sign" v-if="itemDone(item)"></div>
-          </label>
-          <div class="description-input" v-if="isEditing(item)">
-            <input v-model="editedDescription" type="text" />
-          </div>
-          <div v-else>{{ item.description }}</div>
-          <div class="do-before-field" v-if="isEditing(item)">
-            <input v-model="editedDobefore" type="number" min="1" max="140" />
-          </div>
-          <div class="do-before-list" v-else>{{ item.do_before }}</div>
-          <div class="update-cancel-btns" v-if="isEditing(item)">
-            <div class="update-btn" @click="updateItem(item, i)">Update</div>
-            <div class="cancel-btn" @click="noSelection">Cancel</div>
-          </div>
-          <button
-            v-else
-            :class="{ 'reveal-btn': !isEditing(item) }"
-            @click="modals[i] ? resetModals() : showModal(i)"
-          >
-            <!-- Modal start -->
-            <Transition name="fade">
-              <div class="modal-list" v-show="modals[i]">
-                <div class="modal-head">
-                  <h2>{{ item.description }}</h2>
-                  <div class="modal-close">
-                    <img src="./assets/images/close-grey.svg" />
-                  </div>
-                </div>
-                <div>
-                  <img src="./assets/images/icon.svg" />
-                  <span> Bucket item action {{ i }}</span>
-                </div>
-                <div>
-                  <button class="delete-btn" @click="confirmDelete(item, i)">
-                    <img src="./assets/images/close-red.svg" /> Delete bucket
-                    item
-                  </button>
-                </div>
-                <div>
-                  <button class="edit-btn" @click="edit(item)">
-                    <img src="./assets/images/edit.svg" /> Edit bucket item
-                  </button>
+    <div class="list-head">
+      <div>Done</div>
+      <div class="do-before-head">Do before age</div>
+    </div>
+
+    <div class="items-list">
+      <!-- Item start -->
+      <div class="item-row" v-for="(item, i) in items" :key="item.uuid">
+        <label
+          class="styled-checkbox"
+          :class="{ 'styled-checkbox-checked': itemDone(item) }"
+          @click="isDone(item, i)"
+        >
+          <div class="checked-sign" v-if="itemDone(item)"></div>
+        </label>
+        <div class="description-input" v-if="isEditing(item)">
+          <input v-model="editedDescription" type="text" />
+        </div>
+        <div v-else>{{ item.description }}</div>
+        <div class="do-before-field" v-if="isEditing(item)">
+          <input v-model="editedDobefore" type="number" min="1" max="140" />
+        </div>
+        <div class="do-before-list" v-else>{{ item.do_before }}</div>
+        <div class="update-cancel-btns" v-if="isEditing(item)">
+          <div class="update-btn" @click="updateItem(item, i)">Update</div>
+          <div class="cancel-btn" @click="noSelection">Cancel</div>
+        </div>
+        <button
+          v-else
+          :class="{ 'reveal-btn': !isEditing(item) }"
+          @click="modals[i] ? resetModals() : showModal(i)"
+        >
+          <!-- Modal start -->
+          <Transition name="fade">
+            <div class="options-modal" v-show="modals[i]">
+              <div class="modal-head">
+                <h2>{{ item.description }}</h2>
+                <div class="modal-close">
+                  <img src="./assets/images/close-grey.svg" />
                 </div>
               </div>
-            </Transition>
-            <!-- Modal end -->
+              <div>
+                <img src="./assets/images/icon.svg" />
+                <span> Bucket item action {{ i }}</span>
+              </div>
+              <div>
+                <button class="delete-btn" @click="confirmDelete(item, i)">
+                  <img src="./assets/images/close-red.svg" /> Delete bucket item
+                </button>
+              </div>
+              <div>
+                <button class="edit-btn" @click="edit(item)">
+                  <img src="./assets/images/edit.svg" /> Edit bucket item
+                </button>
+              </div>
+            </div>
+          </Transition>
+          <!-- Modal end -->
 
-            <div><img src="./assets/images/three-dots.svg" /></div>
-          </button>
-        </div>
+          <div><img src="./assets/images/three-dots.svg" /></div>
+        </button>
       </div>
-      <!-- Item end -->
     </div>
-    <!-- Items list end-->
-
-    <hr />
-    <!-- Footer start-->
-    <div class="footer">
-      <button class="done-btn" @click="doneButton">Done</button>
-    </div>
-    <!-- Footer end-->
+    <!-- Item end -->
   </div>
+  <!-- Items list end-->
+
+  <!-- Footer start-->
+  <div class="cover">
+    <div class="footer">
+      <hr />
+      <div class="done-btn-container">
+        <button class="done-btn" @click="doneButton">Done</button>
+      </div>
+    </div>
+  </div>
+  <!-- Footer end-->
 </template>
 <script>
 import axios from "axios";
@@ -309,13 +312,21 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:600,700");
 @import url("https://fonts.googleapis.com/css?family=Roboto+Mono:500");
+* {
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+}
 body {
   background-color: #f5f5f5;
-  padding-bottom: 140px;
+  padding-top: 40px;
+  height: 100vh;
+  overflow: hidden;
 }
 #app {
-  display: flex;
-  justify-content: center;
+  position: fixed;
+  width: 100%;
+  padding-bottom: 120px;
 }
 
 /* App loader */
@@ -329,12 +340,22 @@ body {
   width: 6rem;
   height: 6rem;
   margin: 0 auto;
-  margin-top: 10rem;
-  margin-bottom: 10rem;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
   border-radius: 50%;
   border: 3px solid #ccc;
   border-top-color: #063251;
   animation: spinner 0.6s linear infinite;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+h2 {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  font-weight: 700;
 }
 
 .header {
@@ -344,36 +365,16 @@ body {
 .main-container {
   font-family: "Open Sans", sans-serif;
   font-style: normal;
-  margin: auto;
-  margin: 3rem;
-  width: 70%;
-  min-width: 400px;
+  height: 60vh;
+  width: 80%;
+  max-width: 700px;
+  margin: 0px auto;
   background-color: #fff;
   box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
     0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
     0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
-  border-radius: 16.8947px;
-  padding: 30px 30px 40px 30px;
-}
-.list-container {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-h1 {
-  padding-left: 20px;
-  font-size: 2rem;
-  font-weight: 700;
-}
-h2 {
-  margin-top: 0px;
-  margin-bottom: 10px;
-  font-weight: 700;
-}
-hr {
-  border: 0;
-  border-top: 1px solid #b5c5d0;
-  width: 95%;
-  margin: 40px auto;
+  border-radius: 18px 18px 0px 0px;
+  padding: 30px 60px 40px 60px;
 }
 
 /* Overlay */
@@ -386,6 +387,64 @@ hr {
 }
 
 /* Add item form toggler */
+
+.add-btn {
+  margin-right: -30px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+.add-btn:hover {
+  transform: rotate(45deg);
+}
+.add-btn-clicked {
+  transform: rotate(45deg);
+}
+
+/* Add item form animation */
+
+.fly-enter-active,
+.fly-leave-active {
+  transition: all 0.1s;
+}
+.fly-enter-from,
+.fly-leave-to {
+  transform: translateY(-100px);
+  opacity: 0;
+}
+
+/* Add item form */
+
+input {
+  padding-left: 0.5rem;
+  font-size: 1rem;
+}
+.add-form-fields {
+  font-size: 1rem;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
+    0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
+    0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
+}
+.form-do-before {
+  width: 100px;
+}
+.form-goal {
+  width: 200px;
+}
+
+/* Add item form submit */
 
 .add-form {
   padding-left: 20px;
@@ -411,62 +470,6 @@ hr {
   background: #67889f;
 }
 
-/* Add item form animation */
-
-.fly-enter-active,
-.fly-leave-active {
-  transition: all 0.3s ease;
-}
-.fly-enter-from,
-.fly-leave-to {
-  transform: translateY(-100px);
-  opacity: 0;
-}
-
-/* Add item form */
-
-input {
-  padding-left: 0.5rem;
-  font-size: 1rem;
-}
-.add-form-fields {
-  font-size: 1rem;
-  border-radius: 8px;
-  padding: 1rem 1.5rem;
-  width: 80%;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  gap: 20px;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
-    0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
-    0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
-}
-.form-do-before {
-  width: 100px;
-}
-.form-goal {
-  width: 200px;
-}
-
-/* Add item form submit */
-
-.add-btn {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-}
-.add-btn:hover {
-  transform: rotate(45deg);
-}
-.add-btn-clicked {
-  transform: rotate(45deg);
-}
-
 /* Items list */
 
 .list-head {
@@ -475,9 +478,8 @@ input {
   margin-bottom: 20px;
 }
 .items-list {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
+  height: 80%;
+  overflow: scroll;
 }
 .item-row {
   font-size: 1rem;
@@ -512,6 +514,7 @@ input {
   border-radius: 50%;
   background: transparent;
   display: flex;
+  justify-content: center;
   align-items: center;
   padding-bottom: 4px;
 }
@@ -543,7 +546,7 @@ input {
 .modal-close:hover {
   color: #000;
 }
-.modal-list {
+.options-modal {
   position: absolute;
   text-align: left;
   right: 60px;
@@ -664,7 +667,31 @@ input {
 /* Footer */
 
 .footer {
+  width: 80%;
+  max-width: 700px;
+  height: 100px;
+  margin: 0px auto;
+  background-color: #ffffff;
+  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
+    0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
+    0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
+  border-radius: 0px 0px 18px 18px;
+  padding: 0px 60px 40px 60px;
+  position: relative;
+}
+.cover {
+  height: 600px;
+  background-color: #f5f5f5;
+  position: relative;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #b5c5d0;
   width: 100%;
+}
+.done-btn-container {
+  padding-top: 20px;
+  padding-bottom: 40px;
   display: flex;
   justify-content: flex-end;
 }
@@ -678,26 +705,35 @@ input {
   border-radius: 8px;
   font-size: 1rem;
   font-weight: regular;
-  margin-right: 10px;
 }
 .done-btn:hover {
   background-color: #67889f;
 }
 
 @media only screen and (max-width: 700px) {
-  .modal-list {
-    width: 86%;
+  .add-btn {
+    margin-right: 0px;
+  }
+  .main-container {
+    padding: 30px 20px 40px 30px;
+  }
+
+  .options-modal {
+    width: 100%;
     right: 0px;
     left: 0px;
     position: fixed;
     bottom: 0px;
     transform: translateY(0px);
     opacity: 1;
-    padding-left: 40px;
+    padding-left: 80px;
     padding-right: 40px;
     border-radius: 16px 16px 0px 0px;
   }
-
+  .do-before-head {
+    margin-left: auto;
+    margin-right: 72px;
+  }
   /* Modal animation */
 
   .fade-enter-active,
@@ -730,6 +766,10 @@ input {
     cursor: pointer;
   }
   .footer {
+    padding: 0px 30px 40px 30px;
+    position: relative;
+  }
+  .done-btn-container {
     justify-content: center;
   }
 }
