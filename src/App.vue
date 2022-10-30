@@ -61,8 +61,8 @@
         <label
           class="styled-checkbox"
           :class="{ 'styled-checkbox-checked': itemDone(item) }"
-          @click="isDone(item, i)"
-        >
+          @click="isDone(item)"
+          ><div class="loading" v-if="isDoneLoading"></div>
           <div class="checked-sign" v-if="itemDone(item)"></div>
         </label>
         <div class="description-input" v-if="isEditing(item)">
@@ -74,7 +74,7 @@
         </div>
         <div class="do-before-list" v-else>{{ item.do_before }}</div>
         <div class="update-cancel-btns" v-if="isEditing(item)">
-          <div class="update-btn" @click="updateItem(item, i)">Update</div>
+          <div class="update-btn" @click="updateItem(item)">Update</div>
           <div class="cancel-btn" @click="noSelection">Cancel</div>
         </div>
         <button
@@ -119,8 +119,8 @@
 
   <!-- Footer start-->
   <div class="cover">
-    <div class="footer">
-      <hr />
+    <div class="footer" :class="{ 'footer-done': addForm }">
+      <hr v-if="addForm" />
       <div v-if="addForm" class="done-btn-container">
         <button class="done-btn" @click="doneButton">Done</button>
       </div>
@@ -207,7 +207,7 @@ export default {
         this.selectedItem = {};
       }
     },
-    async updateItem(item, i) {
+    async updateItem(item) {
       try {
         const { data } = await axios.put(`/api/updateItem?id=${item.id}`, {
           id: item.id,
@@ -219,7 +219,10 @@ export default {
         });
         const id = data[0].id;
         const { description, do_before, done } = data[0].fields;
-        this.items[i] = { id, description, do_before, done };
+        this.items = this.items.map((el) => {
+          if (el.id === item.id) return { id, description, do_before, done };
+          return el;
+        });
         this.resetEditFields();
         this.noSelection();
         alert("The item has been updated.");
@@ -227,7 +230,7 @@ export default {
         alert("An error has occured, please try again.");
       }
     },
-    async isDone(item, i) {
+    async isDone(item) {
       try {
         const { data } = await axios.put(`/api/updateItem?id=${item.id}`, {
           id: item.id,
@@ -238,7 +241,10 @@ export default {
           },
         });
         const id = data[0].id;
-        this.items[i] = { id, ...data[0].fields };
+        this.items = this.items.map((el) => {
+          if (el.id === item.id) return { id, ...data[0].fields };
+          return el;
+        });
       } catch (e) {
         alert("An error has occured, please try again.");
       }
@@ -635,9 +641,6 @@ input {
   background: url(./assets/images/check-mark.svg) no-repeat top 8px left 6px;
 }
 .styled-checkbox:hover {
-  background: url(./assets/images/check-mark-dark.svg) no-repeat top 8px left
-    6px;
-
   background-color: #f5f5f5;
 }
 .styled-checkbox:active {
@@ -645,6 +648,11 @@ input {
 }
 .styled-checkbox-checked {
   background-color: #002844;
+}
+.styled-checkbox-checked:hover {
+  background: url(./assets/images/check-mark-dark.svg) no-repeat top 8px left
+    6px;
+  background-color: #f5f5f5;
 }
 .checked-sign {
   margin-left: 3px;
@@ -655,6 +663,19 @@ input {
 /* Footer */
 
 .footer {
+  width: 80%;
+  max-width: 700px;
+  height: 10px;
+  margin: 0px auto;
+  background-color: #ffffff;
+  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
+    0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
+    0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
+  border-radius: 0px 0px 18px 18px;
+  padding: 0px 60px 40px 60px;
+  position: relative;
+}
+.footer-done {
   width: 80%;
   max-width: 700px;
   height: 100px;
