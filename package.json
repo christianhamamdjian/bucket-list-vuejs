@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "build": "CI= vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "netlify": "ntl dev"
   },
   "dependencies": {
+    "airtable": "^0.11.5",
+    "airtable-node": "^0.1.20",
     "axios": "^1.1.3",
     "core-js": "^3.8.3",
     "vue": "^3.2.13"

@@ -5,7 +5,7 @@
       <div
         @click="toggleAddForm"
         class="add-btn"
-        :class="{ 'add-btn-clicked': this.addForm }"
+        :class="{ 'add-btn-clicked': addForm }"
       >
         <img src="./assets/images/add.svg" />
       </div>
@@ -15,7 +15,7 @@
 
     <!-- Add form start -->
     <Transition name="fly">
-      <div class="add-form" v-show="this.addForm">
+      <div class="add-form" v-show="addForm">
         <form>
           <div class="add-form-fields">
             <input
@@ -47,17 +47,17 @@
     </Transition>
     <!-- Add form end -->
 
-    <div class="loading" v-if="!items.length"></div>
+    <div class="loading" v-if="loading"></div>
 
     <!-- Items list start -->
     <div class="list-head">
       <div>Done</div>
       <div class="do-before-head">Do before age</div>
     </div>
-
+    <h3 v-if="!items.length">Your bucket is empty.</h3>
     <div class="items-list">
       <!-- Item start -->
-      <div class="item-row" v-for="(item, i) in items" :key="item.uuid">
+      <div class="item-row" v-for="(item, i) in items" :key="item.id">
         <label
           class="styled-checkbox"
           :class="{ 'styled-checkbox-checked': itemDone(item) }"
@@ -140,23 +140,14 @@ export default {
       editedDescription: "",
       editedDobefore: "",
       selectedItem: {},
+      loading: false,
       overlay: false,
       modals: [],
       addForm: false,
-      apiUrl: process.env.VUE_APP_API_URL,
-      apiKey: process.env.VUE_APP_API_KEY,
     };
   },
-  async mounted() {
-    const response = await axios.get(
-      this.apiUrl + "/api/item?offset=0&limit=20",
-      {
-        headers: {
-          "API-key": this.apiKey,
-        },
-      }
-    );
-    this.items = response.data.data;
+  mounted() {
+    this.getItems();
   },
   watch: {
     description: function (newValue) {
@@ -167,39 +158,42 @@ export default {
     },
   },
   methods: {
+    async getItems() {
+      this.loading = true;
+      const { data } = await axios.get("/api/getItems");
+      this.noSelection;
+      this.loading = false;
+      this.items = [...data];
+    },
     async addItem() {
       try {
-        const response = await axios.post(
-          this.apiUrl + "/api/item",
-          {
-            description: this.description,
-            do_before: this.do_before,
-          },
-          {
-            headers: {
-              "API-key": this.apiKey,
-            },
-            "content-type": "text/json",
-          }
-        );
-        this.items = [...this.items, response.data];
+        const { data } = await axios.post("/api/createItem", {
+          description: this.description,
+          do_before: this.do_before,
+          done: "false",
+        });
         this.description = "";
         this.do_before = "";
         this.hideAddForm();
+        const id = data[0].id;
+        const { description, do_before, done } = data[0].fields;
+        this.items = [...this.items, { id, description, do_before, done }];
+        alert("The item has been added.");
       } catch (e) {
         alert("An error has occured, please try again.");
       }
     },
     async removeItem(item, i) {
       try {
-        await axios.delete(this.apiUrl + "/api/item/" + item.uuid, {
-          headers: {
-            "API-key": this.apiKey,
-          },
-        });
+        const { data } = await axios.delete(`/api/deleteItem?id=${item.id}`);
+        if (data == null) {
+          console.log(null);
+        }
         this.items.splice(i, 1);
+        this.items = [...this.items];
+        alert("The item has been deleted.");
       } catch (e) {
-        alert("An error has occured, please try again.");
+        console.log(e);
       }
     },
     confirmDelete(item, i) {
@@ -215,42 +209,36 @@ export default {
     },
     async updateItem(item, i) {
       try {
-        const response = await axios.put(
-          this.apiUrl + "/api/item/" + item.uuid,
-          {
+        const { data } = await axios.put(`/api/updateItem?id=${item.id}`, {
+          id: item.id,
+          fields: {
             description: this.editedDescription,
             do_before: this.editedDobefore,
+            done: item.done,
           },
-          {
-            headers: {
-              "API-key": this.apiKey,
-            },
-            "content-type": "text/json",
-          }
-        );
-        this.items[i] = response.data;
-        this.noSelection();
+        });
+        const id = data[0].id;
+        const { description, do_before, done } = data[0].fields;
+        this.items[i] = { id, description, do_before, done };
         this.resetEditFields();
-        this.overlay = false;
+        this.noSelection();
+        alert("The item has been updated.");
       } catch (e) {
         alert("An error has occured, please try again.");
       }
     },
     async isDone(item, i) {
       try {
-        const response = await axios.put(
-          this.apiUrl + "/api/item/" + item.uuid,
-          {
-            done: !item.done,
+        const { data } = await axios.put(`/api/updateItem?id=${item.id}`, {
+          id: item.id,
+          fields: {
+            description: item.description,
+            do_before: item.do_before,
+            done: item.done === "true" ? "false" : "true",
           },
-          {
-            headers: {
-              "API-key": this.apiKey,
-            },
-            "content-type": "text/json",
-          }
-        );
-        this.items[i] = response.data;
+        });
+        const id = data[0].id;
+        this.items[i] = { id, ...data[0].fields };
       } catch (e) {
         alert("An error has occured, please try again.");
       }
@@ -264,7 +252,7 @@ export default {
       this.editedDobefore = item.do_before;
     },
     isEditing(item) {
-      return item.uuid === this.selectedItem.uuid;
+      return item.id === this.selectedItem.id;
     },
     noSelection() {
       this.selectedItem = {};
@@ -288,7 +276,7 @@ export default {
       this.overlay = false;
     },
     itemDone(item) {
-      return item.done;
+      return item.done === "true" ? true : false;
     },
     toggleAddForm() {
       this.addForm = !this.addForm;
