@@ -121,7 +121,7 @@
   <div class="cover">
     <div class="footer">
       <hr />
-      <div class="done-btn-container">
+      <div v-if="addForm" class="done-btn-container">
         <button class="done-btn" @click="doneButton">Done</button>
       </div>
     </div>
@@ -466,7 +466,7 @@ input {
   margin-bottom: 20px;
 }
 .items-list {
-  height: 80%;
+  height: 70%;
   overflow: scroll;
 }
 .item-row {
