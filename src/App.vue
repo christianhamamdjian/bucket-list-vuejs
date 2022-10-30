@@ -756,7 +756,6 @@ hr {
   .add-form-fields {
     padding: 1rem 0.5rem;
     width: 95%;
-    justify-items: space-between;
   }
   .form-do-before {
     margin-left: auto;
