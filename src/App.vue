@@ -55,7 +55,7 @@
       <div class="do-before-head">Do before age</div>
     </div>
     <h3 v-if="!items.length">Your bucket is empty.</h3>
-    <div class="items-list">
+    <div class="items-list" :class="{ 'items-list-adding': addForm }">
       <!-- Item start -->
       <div class="item-row" v-for="(item, i) in items" :key="item.id">
         <label
@@ -174,7 +174,7 @@ export default {
         });
         this.description = "";
         this.do_before = "";
-        this.hideAddForm();
+        // this.hideAddForm();
         const id = data[0].id;
         const { description, do_before, done } = data[0].fields;
         this.items = [...this.items, { id, description, do_before, done }];
@@ -473,6 +473,10 @@ input {
 }
 .items-list {
   height: 70%;
+  overflow: scroll;
+}
+.items-list-adding {
+  height: 50%;
   overflow: scroll;
 }
 .item-row {
