@@ -416,12 +416,15 @@ h2 {
 }
 button {
   height: 2.2rem;
+  border-radius: 8px;
 }
 input {
   color: #67889f;
   padding-left: 0.5rem;
   height: 2.2rem;
   font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #67889f;
 }
 .add-form-fields {
   font-size: 1rem;
@@ -455,9 +458,10 @@ input {
   font-size: 0.8rem;
   border: none;
   border: 1px solid #67889f;
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 0.5rem 1rem;
   background: #ffffff;
+  margin-left: auto;
 }
 .add-form-btn {
   color: #67889f;
@@ -467,6 +471,7 @@ input {
   border-radius: 4px;
   padding: 0.5rem 1rem;
   background: #ffffff;
+  margin-left: auto;
 }
 .add-form-btn:hover {
   background: #f5f5f5;
@@ -607,7 +612,7 @@ input {
   height: 2.2rem;
   border: none;
   border: 1px solid #67889f;
-  border-radius: 4px;
+  border-radius: 6px;
   background: transparent;
   display: flex;
   align-items: center;
@@ -640,8 +645,7 @@ input {
   font-size: 1rem;
   font-weight: 500;
   width: 50px;
-  border-radius: 4px;
-  border: 1px solid #67889f;
+  border-radius: 6px;
 }
 
 /* Done checkbox */
