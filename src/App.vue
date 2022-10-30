@@ -359,7 +359,8 @@ h2 {
 .main-container {
   font-family: "Open Sans", sans-serif;
   font-style: normal;
-  height: 60vh;
+  height: 80vh;
+  min-height: 80vh;
   width: 80%;
   max-width: 700px;
   margin: 0px auto;
@@ -368,7 +369,7 @@ h2 {
     0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
     0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
   border-radius: 18px 18px 0px 0px;
-  padding: 30px 60px 40px 60px;
+  padding: 30px 60px 0px 60px;
 }
 
 /* Overlay */
@@ -410,9 +411,16 @@ h2 {
 }
 
 /* Add item form */
-
+::placeholder {
+  color: #67889f;
+}
+button {
+  height: 2.2rem;
+}
 input {
+  color: #67889f;
   padding-left: 0.5rem;
+  height: 2.2rem;
   font-size: 1rem;
 }
 .add-form-fields {
@@ -424,7 +432,7 @@ input {
   flex-wrap: wrap;
   flex-direction: row;
   gap: 20px;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-top: 20px;
   margin-bottom: 20px;
   box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
@@ -444,6 +452,7 @@ input {
   padding-left: 20px;
 }
 .add-form-btn-disabled {
+  font-size: 0.8rem;
   border: none;
   border: 1px solid #67889f;
   border-radius: 4px;
@@ -451,6 +460,8 @@ input {
   background: #ffffff;
 }
 .add-form-btn {
+  color: #67889f;
+  font-size: 0.8rem;
   border: none;
   border: 1px solid #67889f;
   border-radius: 4px;
@@ -591,6 +602,9 @@ input {
 }
 .update-btn,
 .cancel-btn {
+  color: #67889f;
+  font-size: 0.8rem;
+  height: 2.2rem;
   border: none;
   border: 1px solid #67889f;
   border-radius: 4px;
@@ -691,6 +705,11 @@ input {
   border-radius: 0px 0px 18px 18px;
   padding: 0px 60px 40px 60px;
   position: relative;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 1)
+  );
 }
 .cover {
   height: 600px;
