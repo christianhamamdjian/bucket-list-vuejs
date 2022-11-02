@@ -268,6 +268,7 @@ export default {
       this.editedDobefore = "";
     },
     showModal(i) {
+      this.resetModals();
       this.modals[i] = true;
       this.showOverlay();
     },
@@ -299,6 +300,9 @@ export default {
       this.addForm = false;
       this.description = "";
       this.do_before = "";
+    },
+    modalTopPosition() {
+      return "0px";
     },
   },
 };
@@ -527,6 +531,7 @@ input {
   border: none;
   border-radius: 50%;
   background: transparent;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -561,16 +566,17 @@ input {
   color: #000;
 }
 .options-modal {
-  position: absolute;
+  position: fixed;
   text-align: left;
-  right: 60px;
+  top: 30%;
+  width: 260px;
   background: #ffffff;
   box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
     -32.3816px -1.40789px 47.8684px -16.8947px rgba(2, 57, 95, 0.28),
     -64.7632px 59.1316px 30.9737px -49.2763px rgba(2, 57, 95, 0.23);
   border-radius: 16px;
   padding: 20px;
-  z-index: 100;
+  z-index: 999;
 }
 
 /* Modal buttons */
@@ -762,6 +768,7 @@ hr {
   }
   .options-modal {
     width: 100%;
+    top: auto;
     right: 0px;
     left: 0px;
     position: fixed;
