@@ -93,7 +93,7 @@
               </div>
               <div>
                 <img src="./assets/images/icon.svg" />
-                <span> Bucket item action {{ i }}</span>
+                <span> Bucket item action {{ i + 1 }}</span>
               </div>
               <div>
                 <button class="delete-btn" @click="confirmDelete(item, i)">
