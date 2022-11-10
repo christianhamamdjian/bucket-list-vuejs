@@ -2,13 +2,13 @@
   <div class="overlay" v-show="overlay" @click="resetModals"></div>
   <div class="main-container">
     <div class="header">
-      <div
+      <button
         @click="toggleAddForm"
         class="add-btn"
         :class="{ 'add-btn-clicked': addForm }"
       >
         <img src="./assets/images/add.svg" />
-      </div>
+      </button>
     </div>
 
     <h1>Bucket List</h1>
@@ -55,9 +55,9 @@
       <div class="do-before-head">Do before age</div>
     </div>
     <h3 v-if="!items.length">Your bucket is empty.</h3>
-    <div class="items-list" :class="{ 'items-list-adding': addForm }">
+    <ul class="items-list" :class="{ 'items-list-adding': addForm }">
       <!-- Item start -->
-      <div class="item-row" v-for="(item, i) in items" :key="item.id">
+      <li class="item-row" v-for="(item, i) in items" :key="item.id">
         <label
           class="styled-checkbox"
           :class="{ 'styled-checkbox-checked': itemDone(item) }"
@@ -74,8 +74,8 @@
         </div>
         <div class="do-before-list" v-else>{{ item.do_before }}</div>
         <div class="update-cancel-btns" v-if="isEditing(item)">
-          <div class="update-btn" @click="updateItem(item)">Update</div>
-          <div class="cancel-btn" @click="noSelection">Cancel</div>
+          <button class="update-btn" @click="updateItem(item)">Update</button>
+          <button class="cancel-btn" @click="noSelection">Cancel</button>
         </div>
         <button
           v-else
@@ -111,8 +111,9 @@
 
           <div><img src="./assets/images/three-dots.svg" /></div>
         </button>
-      </div>
-    </div>
+      </li>
+    </ul>
+
     <!-- Item end -->
   </div>
   <!-- Items list end-->
@@ -421,6 +422,11 @@ h2 {
 button {
   height: 2.2rem;
   border-radius: 8px;
+  border: none;
+  background: none;
+}
+button:focus {
+  outline: 0;
 }
 input {
   color: #67889f;
