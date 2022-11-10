@@ -369,9 +369,9 @@ h2 {
   max-width: 700px;
   margin: 0px auto;
   background-color: #fff;
-  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
-    0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
-    0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
+  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.1),
+    0px 15px 50px -25px rgba(2, 57, 95, 0.2),
+    0px 25px 5px -30px rgba(2, 57, 95, 0.2);
   border-radius: 18px 18px 0px 0px;
   padding: 30px 60px 0px 60px;
 }
@@ -442,9 +442,9 @@ input {
   justify-content: flex-start;
   margin-top: 20px;
   margin-bottom: 20px;
-  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
-    0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
-    0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
+  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.1),
+    0px 15px 50px -25px rgba(2, 57, 95, 0.2),
+    0px 25px 5px -30px rgba(2, 57, 95, 0.2);
 }
 .form-do-before {
   width: 100px;
@@ -493,11 +493,11 @@ input {
 }
 .items-list {
   height: 70%;
-  overflow: scroll;
+  overflow: auto;
 }
 .items-list-adding {
   height: 50%;
-  overflow: scroll;
+  overflow: auto;
 }
 .item-row {
   font-size: 1rem;
@@ -571,9 +571,7 @@ input {
   top: 30%;
   width: 260px;
   background: #ffffff;
-  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
-    -32.3816px -1.40789px 47.8684px -16.8947px rgba(2, 57, 95, 0.28),
-    -64.7632px 59.1316px 30.9737px -49.2763px rgba(2, 57, 95, 0.23);
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   border-radius: 16px;
   padding: 20px;
   z-index: 999;
@@ -696,9 +694,9 @@ input {
   height: 10px;
   margin: 0px auto;
   background-color: #ffffff;
-  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
-    0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
-    0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
+  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.1),
+    0px 15px 50px -25px rgba(2, 57, 95, 0.2),
+    0px 25px 5px -30px rgba(2, 57, 95, 0.2);
   border-radius: 0px 0px 18px 18px;
   padding: 0px 60px 40px 60px;
   position: relative;
@@ -709,9 +707,9 @@ input {
   height: 100px;
   margin: 0px auto;
   background-color: #ffffff;
-  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.09),
-    0px 13.59px 47.8684px -26.89px rgba(2, 57, 95, 0.2),
-    0px 24.13px 50.97px -29.28px rgba(2, 57, 95, 0.23);
+  box-shadow: 1px 1px 0px rgba(0, 40, 68, 0.1),
+    0px 15px 50px -25px rgba(2, 57, 95, 0.2),
+    0px 25px 5px -30px rgba(2, 57, 95, 0.2);
   border-radius: 0px 0px 18px 18px;
   padding: 0px 60px 40px 60px;
   position: relative;
