@@ -757,7 +757,7 @@ hr {
   background-color: #67889f;
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 820px) {
   .add-btn {
     margin-right: 0px;
   }
