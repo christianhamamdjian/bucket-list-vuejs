@@ -786,7 +786,6 @@ hr {
   }
   .do-before-head {
     margin-left: auto;
-    margin-right: 72px;
   }
   /* Modal animation */
 
@@ -826,6 +825,26 @@ hr {
   }
   .done-btn-container {
     justify-content: center;
+  }
+}
+@media only screen and (max-width: 630px) {
+  .update-cancel-btns {
+    flex-direction: row;
+    margin-left: auto;
+  }
+  .item-row-edit {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-grow: 1;
+  }
+  .description-input {
+    width: 80%;
+  }
+  .description-input input {
+    width: 90%;
+  }
+  .do-before-field {
+    margin-left: auto;
   }
 }
 </style>
