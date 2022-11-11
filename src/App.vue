@@ -70,7 +70,7 @@
         <div class="description-input" v-if="isEditing(item)">
           <input v-model="editedDescription" type="text" />
         </div>
-        <div v-else>{{ item.description }}</div>
+        <div class="description-list" v-else>{{ item.description }}</div>
         <div class="do-before-field" v-if="isEditing(item)">
           <input v-model="editedDobefore" type="number" min="1" max="140" />
         </div>
@@ -835,7 +835,9 @@ hr {
   .item-row-edit {
     flex-wrap: wrap;
     justify-content: flex-start;
-    flex-grow: 1;
+  }
+  .description-list {
+    width: 80%;
   }
   .description-input {
     width: 80%;
