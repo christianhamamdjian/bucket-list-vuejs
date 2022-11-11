@@ -1,7 +1,8 @@
 <template>
   <div class="overlay" v-show="overlay" @click="resetModals"></div>
-  <div class="main-container">
-    <div class="header">
+  <!-- Main start -->
+  <main class="main-container">
+    <nav class="header">
       <button
         @click="toggleAddForm"
         class="add-btn"
@@ -9,46 +10,42 @@
       >
         <img src="./assets/images/add.svg" />
       </button>
-    </div>
-
-    <h1>Bucket List</h1>
-
+    </nav>
+    <header>
+      <h1>Bucket List</h1>
+    </header>
     <!-- Add form start -->
     <Transition name="fly">
-      <div class="add-form" v-show="addForm">
-        <form>
-          <div class="add-form-fields">
-            <input
-              class="form-goal"
-              v-model="description"
-              type="text"
-              placeholder="Goal..."
-            />
-            <input
-              class="form-do-before"
-              v-model="do_before"
-              type="number"
-              placeholder="Do before..."
-              min="1"
-              max="140"
-            />
-            <button
-              type="submit"
-              class="add-form-btn-disabled"
-              :class="{ 'add-form-btn': this.description && this.do_before }"
-              @click.prevent="addItem"
-              :disabled="!this.description || !this.do_before"
-            >
-              Add
-            </button>
-          </div>
-        </form>
-      </div>
+      <form class="add-form" v-show="addForm">
+        <div class="add-form-fields">
+          <input
+            class="form-goal"
+            v-model="description"
+            type="text"
+            placeholder="Goal..."
+          />
+          <input
+            class="form-do-before"
+            v-model="do_before"
+            type="number"
+            placeholder="Do before..."
+            min="1"
+            max="140"
+          />
+          <button
+            type="submit"
+            class="add-form-btn-disabled"
+            :class="{ 'add-form-btn': this.description && this.do_before }"
+            @click.prevent="addItem"
+            :disabled="!this.description || !this.do_before"
+          >
+            Add
+          </button>
+        </div>
+      </form>
     </Transition>
     <!-- Add form end -->
-
     <div class="loading" v-if="loading"></div>
-
     <!-- Items list start -->
     <div class="list-head">
       <div>Done</div>
@@ -57,7 +54,12 @@
     <h3 v-if="!items.length">Your bucket is empty.</h3>
     <ul class="items-list" :class="{ 'items-list-adding': addForm }">
       <!-- Item start -->
-      <li class="item-row" v-for="(item, i) in items" :key="item.id">
+      <li
+        class="item-row"
+        :class="{ 'item-row-edit': isEditing(item) }"
+        v-for="(item, i) in items"
+        :key="item.id"
+      >
         <label
           class="styled-checkbox"
           :class="{ 'styled-checkbox-checked': itemDone(item) }"
@@ -108,25 +110,23 @@
             </div>
           </Transition>
           <!-- Modal end -->
-
           <div><img src="./assets/images/three-dots.svg" /></div>
         </button>
       </li>
     </ul>
-
     <!-- Item end -->
-  </div>
+  </main>
   <!-- Items list end-->
-
+  <!-- Main end -->
   <!-- Footer start-->
-  <div class="cover">
+  <footer class="footer-cover">
     <div class="footer" :class="{ 'footer-done': addForm }">
       <hr v-if="addForm" />
       <div v-if="addForm" class="done-btn-container">
         <button class="done-btn" @click="doneButton">Done</button>
       </div>
     </div>
-  </div>
+  </footer>
   <!-- Footer end-->
 </template>
 <script>
@@ -350,6 +350,7 @@ body {
 h1 {
   font-size: 2rem;
   font-weight: 700;
+  margin-left: 0px;
 }
 h2 {
   margin-top: 0px;
@@ -440,7 +441,7 @@ input {
   font-size: 1rem;
   border-radius: 8px;
   padding: 1rem 1.5rem;
-  width: 80%;
+  width: 90%;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
@@ -499,11 +500,11 @@ input {
 }
 .items-list {
   height: 70%;
-  overflow: auto;
+  overflow-y: auto;
 }
 .items-list-adding {
   height: 50%;
-  overflow: auto;
+  overflow-y: auto;
 }
 .item-row {
   font-size: 1rem;
@@ -725,7 +726,7 @@ input {
     rgba(255, 255, 255, 1)
   );
 }
-.cover {
+.footer-cover {
   height: 600px;
   background-color: #f5f5f5;
   position: relative;
@@ -761,14 +762,14 @@ hr {
     margin-right: 0px;
   }
   .main-container {
-    padding: 30px 20px 40px 30px;
+    padding: 20px 20px 40px 30px;
   }
   .add-form-fields {
     padding: 1rem 0.5rem;
     width: 95%;
   }
   .form-do-before {
-    margin-left: auto;
+    margin-left: flex-start;
   }
   .options-modal {
     width: 100%;
@@ -803,13 +804,14 @@ hr {
     margin-right: 0px;
   }
   .update-cancel-btns {
+    margin-left: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
-  .item-row {
-    width: 95%;
-    gap: 15px;
+  .item-row-edit {
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
   .modal-close {
     display: block;
